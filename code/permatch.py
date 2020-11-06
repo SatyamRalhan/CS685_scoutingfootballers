@@ -22,10 +22,16 @@ for p in range(14):
         thiskeys=[]
         ths=rows[1].findAll("th")
         for i in ths:
-            if i.getText() not in keys:
-                keys.append(i.getText())
-            thiskeys.append(i.getText())    
+            # if i.getText() not in keys:
+            #     keys.append(i.getText())
+            # thiskeys.append(i.getText())  
+            # print(i)
+            temp = i['data-stat']
+            if temp not in keys:
+                keys.append(temp)
+            thiskeys.append(temp)    
             # print(i.getText(),end=",")
+        # print(keys)
         # print(thiskeys)
         # print()    
         for i in range(2,len(rows)-1):
@@ -77,6 +83,8 @@ for p in range(14):
 for i in playersdict:
     print(i,playersdict[i])
     print("\n\n\n")
+
+
 # for i in range(1,len(rows)):
 #     match_report=rows[i].find('td',{"data-stat":"match_report"})
 #     team_1=rows[i].find('td',{"data-stat":"squad_a"})
