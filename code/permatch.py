@@ -1,11 +1,11 @@
-
+import os.path as pa
 import csv
 import requests
 from bs4 import BeautifulSoup
 
 text="https://fbref.com"
 
-url="https://fbref.com/en/matches/5dc61284/Athletic-Club-Barcelona-August-16-2019-La-Liga"
+url="https://fbref.com/en/matches/c224d1e8/Tottenham-Hotspur-Newcastle-United-August-25-2019-Premier-League"
 req=requests.get(url)
 soup = BeautifulSoup(req.content, 'html.parser')
 
@@ -39,6 +39,7 @@ for p in range(14):
         #     # print(rows[i])
             th=rows[i].find("th")
             name=th.getText()
+            #print(name+"\n")
             tds=rows[i].findAll("td")
             localdict={}
             for k in range(len(tds)):
@@ -80,10 +81,40 @@ for p in range(14):
 # matchlist=[]
 # print(keys)
 # print(mydivs[6])
-for i in playersdict:
-    print(i,playersdict[i])
-    print("\n\n\n")
+#cnt=0
+f=open('attributes.txt','r')
+lines=f.readlines()
+s=[]
+for l in lines:
+    s.append(l.split('\n')[0])
+#print(s)
 
+for i in playersdict:
+    #print(i,playersdict[i])
+#    print(i)
+    if(pa.exists(i.strip()+".csv")):
+        with open(i.strip()+".csv",'r') as fi:
+            print("file present")
+            for line in csv.reader(fi):
+                if(line[0]!='position'):
+                    if line[0] in playersdict[i]:
+                        playersdict[i][line[0]]=str(float(line[1])+float(playersdict[i][line[0]]))
+#                print(line)        
+#            break
+#    else:
+    with open(i.strip()+".csv",'w') as fi:
+        for attri in s:
+            if attri in playersdict[i]:
+                fi.write("%s,%s\n"%(attri,playersdict[i][attri]))
+#        break
+#    cnt+=1
+#    if(cnt==3):
+#        break
+#    print(i)
+#    for keys in playersdict[i].keys():
+#        print(keys)        
+#    print(i)
+#    print("\n\n\n")
 
 # for i in range(1,len(rows)):
 #     match_report=rows[i].find('td',{"data-stat":"match_report"})
@@ -104,3 +135,5 @@ for i in playersdict:
 #     csvwriter=csv.writer(csvfile)
 #     csvwriter.writerows(matchlist)
 # print(soup.find_all('a')[0]['href'])
+# -*- coding: utf-8 -*-
+
