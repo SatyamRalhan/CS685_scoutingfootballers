@@ -2,12 +2,10 @@
 import csv
 import requests
 from bs4 import BeautifulSoup
-
 cur=21
 text="https://fbref.com"
 url="https://fbref.com/en/comps/12/schedule/"
 while(url!=""):
-
     req=requests.get(url)
     soup = BeautifulSoup(req.content, 'html.parser')
     
