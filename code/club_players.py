@@ -32,9 +32,16 @@ for league in league_dir:
 				player_dict[player][match_attributes[i][0]] += float(match_attributes[i][1])
 
 for player in player_dict:
+	if player_dict[player]['minutes'] < 300:continue
+	
 	result = []
 	for k in player_dict[player]:
-		result.append([k,player_dict[player][k]])
+		if k=='minutes':continue
+		if k=='position':
+			result.append([k,player_dict[player][k]])
+		else:
+			result.append([k,player_dict[player][k]/player_dict[player]['minutes']])
+
 	write_dir = path+"leagues/" 
 	with open(write_dir+player, "w") as ids:
 		writer_w = csv.writer(ids,delimiter=',')

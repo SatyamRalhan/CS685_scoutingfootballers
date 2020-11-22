@@ -98,10 +98,10 @@ cosine.sort()
 
 print("Euclidean")
 # print(euclidean)
-for i in range(6):print(euclidean[i])
+for i in range(11):print(euclidean[i])
 print("\nCosine")
 # print(cosine)
-for i in range(6):print(cosine[i])
+for i in range(11):print(cosine[i])
 		
 
 
