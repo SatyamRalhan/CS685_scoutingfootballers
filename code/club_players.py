@@ -28,8 +28,6 @@ for league in league_dir:
 		
 		else:
 			for i in range(1,len(match_attributes)):
-				# print(player,league)
-				# print(player_dict[player])
 				if match_attributes[i][1] == '' : match_attributes[i][1] = 0
 				player_dict[player][match_attributes[i][0]] += float(match_attributes[i][1])
 
