@@ -117,8 +117,6 @@ for match_file in match_urls:
                                 if line[0] in playersdict[i]:
                                     if line[1] == '':line[1] = '0'
                                     if playersdict[i][line[0]] == '':playersdict[i][line[0]] = 0
-
-
                                     playersdict[i][line[0]]=str(float(line[1])+float(playersdict[i][line[0]]))
             
                 with open(p_name,'w') as fi:
