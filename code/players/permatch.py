@@ -108,7 +108,8 @@ for match_file in match_urls:
             #print(s)
 
             for i in playersdict:
-                p_name = match_file+'/'+i.strip()+".csv"
+                positon=playersdict[i]['position']
+                p_name = match_file+'/'+i.strip()+"_"+position+".csv"
                 
                 if(os.path.exists(p_name)):
                     with open(p_name,'r') as fi:
