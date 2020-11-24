@@ -29,9 +29,11 @@ for league in league_dir:
 		else:
 			for i in range(1,len(match_attributes)):
 				if match_attributes[i][1] == '' : match_attributes[i][1] = 0
+				print(player)
 				player_dict[player][match_attributes[i][0]] += float(match_attributes[i][1])
 
 for player in player_dict:
+	print(player)
 	if player_dict[player]['minutes'] < 300:continue
 	
 	result = []
