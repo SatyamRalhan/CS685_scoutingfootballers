@@ -74,6 +74,8 @@ for match_file in match_urls:
                         else:
                             playersdict[name]=localdict
                 else:
+                    if(len(mydivs)<p+1):
+                        continue
                     mytable=mydivs[p].find("table")
                     if mytable is None:
                         print(url[2],file = waste)
@@ -100,29 +102,55 @@ for match_file in match_urls:
                         else:
                             playersdict[name]=localdict                    
             
-            f=open('../attributes.txt','r')
-            lines=f.readlines()
-            s=[]
-            for l in lines:
-                s.append(l.split('\n')[0])
+            
             #print(s)
 
             for i in playersdict:
-                positon=playersdict[i]['position']
-                p_name = match_file+'/'+i.strip()+"_"+position+".csv"
+                if 'position' not in playersdict[i]:
+                    print(i)
+                    continue
+                position=playersdict[i]['position'].split(',')[0]
+                if(position=='GK'):
+#                    print(playersdict[i])
+#                    break
+                    f=open('../gkattributes.txt','r')
+                    lines=f.readlines()
+                    s=[]
+                    for l in lines:
+                        s.append(l.split('\n')[0])
+                    p_name = match_file+'/'+i.strip()+"_"+position+".csv" 
+                    if(os.path.exists(p_name)):
+                        with open(p_name,'r') as fi:
+                            for line in csv.reader(fi):
+                                if(line[0]!='position'):
+                                    if line[0] in playersdict[i]:
+                                        if line[1] == '':line[1] = '0'
+                                        if playersdict[i][line[0]] == '':playersdict[i][line[0]] = 0
+                                        playersdict[i][line[0]]=str(float(line[1])+float(playersdict[i][line[0]]))
                 
-                if(os.path.exists(p_name)):
-                    with open(p_name,'r') as fi:
-                        for line in csv.reader(fi):
-                            if(line[0]!='position'):
-                                if line[0] in playersdict[i]:
-                                    if line[1] == '':line[1] = '0'
-                                    if playersdict[i][line[0]] == '':playersdict[i][line[0]] = 0
-                                    playersdict[i][line[0]]=str(float(line[1])+float(playersdict[i][line[0]]))
-            
-                with open(p_name,'w') as fi:
-                    for attri in s:
-                        if attri in playersdict[i]:
-                            fi.write("%s,%s\n"%(attri,playersdict[i][attri]))
+                    with open(p_name,'w') as fi:
+                        for attri in s:
+                            if attri in playersdict[i]:
+                                fi.write("%s,%s\n"%(attri,playersdict[i][attri]))
+                else:
+                    f=open('../attributes.txt','r')
+                    lines=f.readlines()
+                    s=[]
+                    for l in lines:
+                        s.append(l.split('\n')[0])
+                    p_name = match_file+'/'+i.strip()+"_"+position+".csv" 
+                    if(os.path.exists(p_name)):
+                        with open(p_name,'r') as fi:
+                            for line in csv.reader(fi):
+                                if(line[0]!='position'):
+                                    if line[0] in playersdict[i]:
+                                        if line[1] == '':line[1] = '0'
+                                        if playersdict[i][line[0]] == '':playersdict[i][line[0]] = 0
+                                        playersdict[i][line[0]]=str(float(line[1])+float(playersdict[i][line[0]]))
+                
+                    with open(p_name,'w') as fi:
+                        for attri in s:
+                            if attri in playersdict[i]:
+                                fi.write("%s,%s\n"%(attri,playersdict[i][attri]))
             
 
