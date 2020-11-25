@@ -12,7 +12,7 @@ for player in players:
 		attributes = list(reader)
 	# print(attributes)
 
-	if attributes[0][1] != 'GK':continue
+	if attributes[0][1] == 'GK':continue
 	for	i in range(1,len(attributes)):
 		average[i] += float(attributes[i][1])
 
@@ -23,7 +23,7 @@ for player in players:
 	with open(player, newline='') as f:
 		reader = csv.reader(f)
 		attributes = list(reader)
-	if attributes[0][1] != 'GK':continue	
+	if attributes[0][1] == 'GK':continue	
 	for	i in range(1,len(attributes)):
 		sigma[i] += (float(attributes[i][1]) - average[i])**2
 
@@ -45,7 +45,7 @@ for player in players:
 		reader = csv.reader(f)
 		attributes = list(reader)
 	
-	if attributes[0][1] != 'GK':continue
+	if attributes[0][1] == 'GK':continue
 
 	result = [attributes[0]]
 	for i in range(1,len(attributes)):

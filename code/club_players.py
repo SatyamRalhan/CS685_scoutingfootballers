@@ -38,8 +38,8 @@ for player in player_dict:
 	
 	result = []
 	for k in player_dict[player]:
-		if k=='minutes':continue
-		if k=='position':
+		# if k=='minutes':continue
+		if k=='position' or k=='minutes':
 			result.append([k,player_dict[player][k]])
 		else:
 			result.append([k,player_dict[player][k]/player_dict[player]['minutes']])
