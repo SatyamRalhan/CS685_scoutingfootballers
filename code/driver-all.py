@@ -32,6 +32,7 @@ for player in players:
 
 	minutes_played = attributes[1][1]
 	player_attributes = attributes[1:]
+	# print(player_attributes)
 	
 	eucli = 0
 	prod = 0
