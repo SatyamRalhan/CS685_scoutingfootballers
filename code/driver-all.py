@@ -52,10 +52,26 @@ for player in players:
 euclidean.sort()
 cosine.sort(reverse=True)
 
-print("Euclidean")
-# print(euclidean)
-for i in range(11):print(euclidean[i])
+
+euclidiff = []
+for i in range(50):
+	euclidiff.append(euclidean[i][1].split('/')[1].split('_')[0])
+cosdiff = []
+for i in range(50):
+	cosdiff.append(cosine[i][1].split('/')[1].split('_')[0])
+
+# for i in range(15):print(euclidiff[i])
+# for i in range(15):print(cosdiff[i])
+
+# for x in euclidiff:print(x)
+print("Intersection")
+inter = [x for x in euclidiff if x in cosdiff]
+for i in range(1,3):print(inter[i])
+
+print("\nEuclidean")
+eucli2 = [x for x in euclidiff if x not in cosdiff]
+for i in range(2):print(eucli2[i])
+
 print("\nCosine")
-# print(cosine)
-for i in range(11):print(cosine[i])
-		
+cos2 = [x for x in cosdiff if x not in euclidiff]
+for i in range(2):print(cos2[i])
