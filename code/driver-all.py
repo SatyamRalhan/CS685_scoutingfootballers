@@ -1,14 +1,31 @@
 from os import listdir
 from os.path import isfile, join
+from difflib import get_close_matches
 import csv
 
-my_player = input("Enter the player name\n")
-my_player_pos = input("Enter the player player position\n")
-my_player += "_" + my_player_pos
-
 path = "players_zscore"
-players = [path + "/" + f for f in listdir(path)]
 
+my_player = input("Enter the player name\n")
+all_players = [f.split('_')[0] for f in listdir(path)]
+if my_player not in all_players:
+	gcm = get_close_matches(my_player,all_players)
+	if len(gcm) > 0: gcm=gcm[0]
+	else:
+		print("Enter valid player name")
+		exit()
+	print("Did you mean",gcm,"[y/n]")
+	user_response = input()
+	if user_response == 'y': my_player = gcm
+	else: exit() 
+
+pos = [i.rsplit('_',1)[1].split('.')[0] for i in listdir(path) if isfile(join(path,i)) and my_player in i]
+print("Enter the player position out of the following:")
+
+for x in pos:print(x,end=" ")
+my_player_pos = input("\n")
+
+my_player += "_" + my_player_pos
+players = [path + "/" + f for f in listdir(path)]
 my_player = path + "/" + my_player + ".csv"
 
 with open(my_player, newline='') as f:
@@ -54,24 +71,22 @@ cosine.sort(reverse=True)
 
 
 euclidiff = []
-for i in range(50):
+for i in range(10):
 	euclidiff.append(euclidean[i][1].split('/')[1].split('_')[0])
 cosdiff = []
-for i in range(50):
+for i in range(10):
 	cosdiff.append(cosine[i][1].split('/')[1].split('_')[0])
 
-# for i in range(15):print(euclidiff[i])
-# for i in range(15):print(cosdiff[i])
 
 # for x in euclidiff:print(x)
 print("Intersection")
 inter = [x for x in euclidiff if x in cosdiff]
 for i in range(1,3):print(inter[i])
 
-print("\nEuclidean")
+# print("\nEuclidean")
 eucli2 = [x for x in euclidiff if x not in cosdiff]
 for i in range(2):print(eucli2[i])
 
-print("\nCosine")
+# print("\nCosine")
 cos2 = [x for x in cosdiff if x not in euclidiff]
 for i in range(2):print(cos2[i])
