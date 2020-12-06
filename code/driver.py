@@ -1,11 +1,12 @@
 from os import listdir
 from os.path import isfile, join
 import csv
+from difflib import get_close_matches
 # Attribute_possesion = [passes_completed, passes, dribbles_completed, dribbles, passes_completed_short, passes_short, passes_completed_medium, passes_medium, passes_completed_long, passes_long, passes_total_distance, passes_free_kicks, through_balls, passes_pressure, passes_switches, crosses, corner_kicks, passes_intercepted, passes_blocked, dispossessed]
 # Attribute_attack = [goals, assists, pens_made, pens_att, shots_total, shots_on_target, sca, gca, xg, crosses_into_penalty_area, passes_into_final_third, passes_into_penalty_area, progressive_passes, carry_progressive_distance, assisted_shots, fouled, pens_won]
 # Attribute_defense = [tackles, interceptions, blocks, tackles_won, dribble_tackles, dribbles_vs, pressures, pressure_regains, clearances, errors, aerials_won, aerials_lost, ball_recoveries, pens_conceded, fouls, cards_yellow_red]
 #player to find similar
-my_player = input("Enter the player name\n")
+
 position_stricker = ['FW']
 position_winger = ['LW','RW']
 position_attacking_mid = ['AM']
@@ -46,7 +47,24 @@ def getPlayerAttribute(attributes,player_position):
 	
 	return player_attribute
 
-path = "players_zscore"
+path = "players_zscore_all"
+
+my_player = input("Enter the player name\n")
+
+all_players = [f.split('.')[0] for f in listdir(path)]
+if my_player not in all_players:
+	gcm = get_close_matches(my_player,all_players)
+	if len(gcm) > 0: gcm=gcm[0]
+	else:
+		print("Enter valid player name")
+		exit()
+	print("Did you mean",gcm,"[y/n]")
+	user_response = input()
+	if user_response == 'y': my_player = gcm
+	else:
+		print("Enter valid player name")
+		exit() 
+
 players = [path + "/" + f for f in listdir(path)]
 # print(players)
 my_player = path + "/" + my_player + ".csv"

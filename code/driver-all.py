@@ -1,7 +1,78 @@
 from os import listdir
 from os.path import isfile, join
 from difflib import get_close_matches
+from scipy.special import softmax
+
 import csv
+
+with open("survey_ranks.csv", newline='') as f:
+	reader = csv.reader(f)
+	ranks = list(reader)
+
+eucli_point = 0
+cos_point = 0
+
+position_stricker = ['FW']
+position_winger = ['LW','RW']
+position_attacking_mid = ['AM']
+position_center_mid = ['LM','CM','RM','MF']
+position_defensive_mid = ['CDM','DM']
+position_center_back = ['CB','DF']
+position_full_back = ['RB','LB','WB']
+position_goalkeeper = ['GK']
+poolmap = {}
+
+for x in position_stricker:
+	poolmap[x] = ["attribute_attack"]
+for x in position_winger:
+	poolmap[x] = ["attribute_possesion","attribute_attack"]
+for x in position_attacking_mid:
+	poolmap[x] = ["attribute_possesion","attribute_attack"]		
+for x in position_center_mid:
+	poolmap[x] = ["attribute_possesion"]
+for x in position_defensive_mid:
+	poolmap[x] = ["attribute_possesion","attribute_defence"]
+for x in position_full_back:
+	poolmap[x] = ["attribute_defence","attribute_defence","attribute_possesion"]
+for x in position_center_back:
+	poolmap[x] = ["attribute_possesion","attribute_defence"]
+for x in position_goalkeeper:
+	poolmap[x] = ["atttibute_gk"]
+
+def getPlayerAttribute(attributes,player_position):
+	attribute_dict = {}
+	attribute_dict["attribute_possesion"] = attributes[2:22]
+	attribute_dict["attribute_attack"] = attributes[22:39]
+	attribute_dict["attribute_defence"] = attributes[39:]
+	attribute_dict["attribute_gk"] = attributes[:]
+
+	player_attribute = []
+	for x in poolmap[player_position]:
+		player_attribute += attribute_dict[x]
+	
+	return player_attribute
+
+
+def weight(points,pref):
+	global eucli_point
+	global cos_point
+	if pref == "": return
+	if len(pref)>1:return
+	pref=int(pref)
+	if pref == 3 or pref == 4: eucli_point += points
+	elif pref == 5 or pref == 6: cos_point += points
+	else:
+		eucli_point += points/2
+		cos_point += points/2
+
+for i in range(len(ranks)):
+	for j in range(len(ranks[i])):
+		if (j+1)%4 == 0: continue
+		elif (j+1)%4 == 1: weight(3,ranks[i][j])
+		elif (j+1)%4 == 2: weight(2,ranks[i][j])
+		elif (j+1)%4 == 3: weight(1,ranks[i][j])
+
+# print(eucli_point,cos_point)
 
 path = "players_zscore"
 
@@ -16,7 +87,9 @@ if my_player not in all_players:
 	print("Did you mean",gcm,"[y/n]")
 	user_response = input()
 	if user_response == 'y': my_player = gcm
-	else: exit() 
+	else:
+		print("Enter valid player name")
+		exit() 
 
 pos = [i.rsplit('_',1)[1].split('.')[0] for i in listdir(path) if isfile(join(path,i)) and my_player in i]
 print("Enter the player position out of the following:")
@@ -36,8 +109,8 @@ with open(my_player, newline='') as f:
 
 my_player_position = match_attributes[0][1]
 my_player_attributes = match_attributes[1:]
-euclidean = []
-cosine = []
+euclidean,eucli_val = [],[]
+cosine,cos_val = [],[]
 
 for player in players:
 	with open(player, newline='') as f:
@@ -64,29 +137,23 @@ for player in players:
 		prod = prod / ((sq_sum_1*sq_sum_2)**0.5)
 	
 	euclidean.append([eucli,player])
+	eucli_val.append(eucli)
 	cosine.append([prod,player])
+	cos_val.append(1-prod)
 
-euclidean.sort()
-cosine.sort(reverse=True)
+eucli_val = softmax(eucli_val)
+cos_val = softmax(cos_val)
 
+final_order = []
 
-euclidiff = []
-for i in range(10):
-	euclidiff.append(euclidean[i][1].split('/')[1].split('_')[0])
-cosdiff = []
-for i in range(10):
-	cosdiff.append(cosine[i][1].split('/')[1].split('_')[0])
+for i in range(len(euclidean)):
+	euclidean[i][0] = eucli_val[i]
+	cosine[i][0] = cos_val[i]
+	name = euclidean[i][1]
+	value = eucli_val[i]*eucli_point + cos_val[i]*cos_point
+	final_order.append([value,name])
 
-
-# for x in euclidiff:print(x)
-print("Intersection")
-inter = [x for x in euclidiff if x in cosdiff]
-for i in range(1,3):print(inter[i])
-
-# print("\nEuclidean")
-eucli2 = [x for x in euclidiff if x not in cosdiff]
-for i in range(2):print(eucli2[i])
-
-# print("\nCosine")
-cos2 = [x for x in cosdiff if x not in euclidiff]
-for i in range(2):print(cos2[i])
+final_order.sort()
+print("\nThe following players could be a possible replacement:")
+for i in range(1,11):
+	print(str(i)+":",final_order[i][1].split('/')[1].split('_')[0])
